@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wilco Tilesets</title>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <style>
+      html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+      }
+
+      #map {
+          width: 100%;
+          height: 100%;
+      }
+      .mapboxgl-ctrl {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: white;
+          padding: 10px;
+          border-radius: 5px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      }
+      .popup-content h4 {
+          margin:0;
+          padding:0;
+      }
+      .popup-content ul {
+          list-style-type: none; /* Remove bullets */
+          margin:0;
+          padding:0;
+      }
+      .popup-content li {
+          margin:0;    /* Add space between list items */
+          padding:0;
+      }
+
+  </style>
+</head>
+
+<body>
+<div id="map"></div>
+<div class="mapboxgl-ctrl" id="layer-control">
+</div>
+
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1Ijoid2lsbGNhcnRlciIsImEiOiJjaWdjdHdkNzYwZGp3dTVtMGhhY2ZkaDloIn0.9qTtVfFnKXVe82B-6mJbqQ';
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-99.9018, 31.0006],
+    zoom: 5.5
+  });
+
+  const layers = [
+    {
+      id: 'Williamson County',
+      source: 'wilco',
+      url: 'mapbox://wilcotxdash.wilco',
+      lineColor: '#003366',
+      fillColor: '#003366',
+      geometryType: 'polygon',
+      checked: true
+    },
+    {
+      id: 'Wilco - Cities',
+      source: 'wilco_cities',
+      url: 'mapbox://wilcotxdash.wilco_cities',
+      pointColor: '#000000',
+      geometryType: 'point',
+      checked: false
+    },
+    {
+      id: 'Wilco - Fema Flood Elevations',
+      source: 'fema_flood_elevations',
+      url: 'mapbox://wilcotxdash.fema_flood_elevations',
+      lineColor: '#008000',
+      fillColor: '#008000',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Wilco - Roads',
+      source: 'wilco_roads',
+      url: 'mapbox://wilcotxdash.wilco_roads',
+      lineColor: '#808080',
+      geometryType: 'line',
+      checked: false
+    },
+    {
+      id: 'Wilco - Springs',
+      source: 'springs',
+      url: 'mapbox://wilcotxdash.springs',
+      pointColor: '#0000FF',
+      geometryType: 'point',
+      checked: false
+    },
+    {
+      id: 'Wilco - Subdivisions',
+      source: 'wilco_subdivisions',
+      url: 'mapbox://wilcotxdash.wilco_subdivisions',
+      lineColor: '#FF3333',
+      fillColor: '#FF3333',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Wilco - TWDB Underground Wells',
+      source: 'twdb_groundwater_wells',
+      url: 'mapbox://wilcotxdash.twdb_groundwater_wells',
+      pointColor: '#000000',
+      geometryType: 'point',
+      checked: false
+    },
+    {
+      id: 'Wilco - Extra Territorial Jurisdictions',
+      source: 'wilco_extra_terr_jurisdiction',
+      url: 'mapbox://wilcotxdash.wilco_extra_terr_jurisdiction',
+      lineColor: '#FF3399',
+      fillColor: '#FF3399',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Counties',
+      source: 'TX_County_WGS84',
+      url: 'mapbox://wilcotxdash.TX_County_WGS84',
+      lineColor: '#000000',
+      fillColor: '#000000',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Groundwater Conservation Districts',
+      source: 'gw_cons_dist_twdb_nov2019',
+      url: 'mapbox://wilcotxdash.gw_cons_dist_twdb_nov2019',
+      lineColor: '#33FF99',
+      fillColor: '#33FF99',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Major Aquifers',
+      source: 'major_aquifers',
+      url: 'mapbox://wilcotxdash.major_aquifers',
+      lineColor: '#33A1FF',
+      fillColor: '#33A1FF',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Major Reservoirs',
+      source: 'major_reservoirs',
+      url: 'mapbox://wilcotxdash.major_reservoirs',
+      lineColor: '#FF3333',
+      fillColor: '#FF3333',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Major Rivers',
+      source: 'major_rivers',
+      url: 'mapbox://wilcotxdash.major_rivers',
+      lineColor: '#0000FF',
+      geometryType: 'line',
+      checked: false
+    },
+    {
+      id: 'Texas - Minor Aquifers',
+      source: 'minor_aquifers',
+      url: 'mapbox://wilcotxdash.minor_aquifers',
+      lineColor: '#FFFF33',
+      fillColor: '#FFFF33',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Public Sewer System Boundaries',
+      source: 'public_sewer_system_boundaries',
+      url: 'mapbox://wilcotxdash.public_sewer_system_boundaries',
+      lineColor: '#3333FF',
+      fillColor: '#3333FF',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Public Water System Boundaries',
+      source: 'public_water_system_boundaries',
+      url: 'mapbox://wilcotxdash.public_water_system_boundaries',
+      lineColor: '#33FFA1',
+      fillColor: '#33FFA1',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Public Water System Intakes',
+      source: 'public_water_system_intakes',
+      url: 'mapbox://wilcotxdash.public_water_system_intakes',
+      pointColor: '#000000',
+      geometryType: 'point',
+      checked: false
+    },
+    {
+      id: 'Texas - Public Water System Wells',
+      source: 'public_water_system_wells',
+      url: 'mapbox://wilcotxdash.public_water_system_wells',
+      pointColor: '#000000',
+      geometryType: 'point',
+      checked: false
+    },
+    {
+      id: 'Texas - Regional Water Planning Groups (RWPGs)',
+      source: 'reg_water_plan_groups_nov2014',
+      url: 'mapbox://wilcotxdash.reg_water_plan_groups_nov2014',
+      lineColor: '#33FFB2',
+      fillColor: '#33FFB2',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Sewer Service Areas',
+      source: 'sewer_service_areas',
+      url: 'mapbox://wilcotxdash.sewer_service_areas',
+      lineColor: '#FF5733',
+      fillColor: '#FF5733',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Texas Grid',
+      source: 'texasgrid_dd',
+      url: 'mapbox://wilcotxdash.texasgrid_dd',
+      lineColor: '#000000',
+      fillColor: '#000000',
+      geometryType: 'polygon',
+      checked: false
+    },
+    {
+      id: 'Texas - Watersheds',
+      source: 'watersheds',
+      url: 'mapbox://wilcotxdash.watersheds',
+      lineColor: '#33FF57',
+      fillColor: '#33FF57',
+      geometryType: 'polygon',
+      checked: false
+    },
+    // {
+    //   id: 'Texas - Water Service Areas',
+    //   source: 'water_service_areas_v2-dsa80d',
+    //   url: 'mapbox://wilcotxdash.water_service_areas_v2-dsa80d',
+    //   lineColor: '#FF5733',
+    //   fillColor: '#FF5733',
+    //   geometryType: 'polygon',
+    //   checked: false
+    // },
+  ];
+
+  const layerControl = document.getElementById('layer-control');
+  layers.forEach(layer => {
+    const input = document.createElement('input');
+    input.type = layer.id === 'Williamson County' ? 'checkbox' : 'radio';
+    input.name = layer.id === 'Williamson County' ? 'williamson-toggle' : 'layer-toggle';
+    input.id = layer.id;
+    input.value = layer.id;
+    input.checked = layer.checked;
+
+    const label = document.createElement('label');
+    label.setAttribute('for', layer.id);
+    label.textContent = layer.id;
+
+    layerControl.appendChild(input);
+    layerControl.appendChild(label);
+    layerControl.appendChild(document.createElement('br'));
+  });
+
+  map.on('load', () => {
+    layers.forEach(layer => {
+      map.addSource(layer.source, {
+        type: 'vector',
+        url: layer.url
+      });
+
+      if (layer.geometryType === 'polygon') {
+        map.addLayer({
+          id: `${layer.id}-line`,
+          type: 'line',
+          source: layer.source,
+          'source-layer': layer.source,
+          layout: { visibility: layer.checked ? 'visible' : 'none' },
+          paint: {
+            'line-color': layer.lineColor,
+            'line-width': 2,
+            'line-opacity': 0.8
+          }
+        });
+
+        map.addLayer({
+          id: `${layer.id}-fill`,
+          type: 'fill',
+          source: layer.source,
+          'source-layer': layer.source,
+          layout: { visibility: layer.checked ? 'visible' : 'none' },
+          paint: {
+            'fill-color': layer.fillColor,
+            'fill-opacity': 0.1
+          }
+        });
+
+        if (layer.id !== 'Williamson County') {
+          map.on('click', `${layer.id}-fill`, (e) => {
+            const features = e.features;
+            if (features.length) {
+              const feature = features[0];
+              const properties = feature.properties;
+              let popupContent = `<div class="popup-content"><h4>Layer ID: ${layer.id}</h4><ul>`;
+              for (const property in properties) {
+                let value = properties[property];
+                if (typeof value === 'string' && value.length > 30) {
+                  value = value.substring(0, 30) + '...';
+                }
+                popupContent += `<li><strong>${property}</strong>: ${value}</li>`;
+              }
+              popupContent += '</ul></div>';
+              new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
+            }
+          });
+        }
+      } else if (layer.geometryType === 'point') {
+        map.addLayer({
+          id: `${layer.id}-circle`,
+          type: 'circle',
+          source: layer.source,
+          'source-layer': layer.source,
+          layout: { visibility: layer.checked ? 'visible' : 'none' },
+          paint: {
+            'circle-color': layer.pointColor,
+            'circle-radius': 3,
+            'circle-opacity': 0.8
+          }
+        });
+
+        map.on('click', `${layer.id}-circle`, (e) => {
+          const features = e.features;
+          if (features.length) {
+            const feature = features[0];
+            const properties = feature.properties;
+            let popupContent = `<div class="popup-content"><h4>Layer ID: ${layer.id}</h4><ul>`;
+            for (const property in properties) {
+              let value = properties[property];
+              if (typeof value === 'string' && value.length > 30) {
+                value = value.substring(0, 30) + '...';
+              }
+              popupContent += `<li><strong>${property}</strong>: ${value}</li>`;
+            }
+            popupContent += '</ul></div>';
+            new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
+          }
+        });
+      } else if (layer.geometryType === 'line') {
+        map.addLayer({
+          id: `${layer.id}-line`,
+          type: 'line',
+          source: layer.source,
+          'source-layer': layer.source,
+          layout: { visibility: layer.checked ? 'visible' : 'none' },
+          paint: {
+            'line-color': layer.lineColor,
+            'line-width': 3,
+            'line-opacity': 0.8
+          }
+        });
+
+        map.on('click', `${layer.id}-line`, (e) => {
+          const features = e.features;
+          if (features.length) {
+            const feature = features[0];
+            const properties = feature.properties;
+            let popupContent = `<div class="popup-content"><h4>Layer ID: ${layer.id}</h4><ul>`;
+            for (const property in properties) {
+              let value = properties[property];
+              if (typeof value === 'string' && value.length > 30) {
+                value = value.substring(0, 30) + '...';
+              }
+              popupContent += `<li><strong>${property}</strong>: ${value}</li>`;
+            }
+            popupContent += '</ul></div>';
+            new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
+          }
+        });
+      }
+    });
+
+    document.querySelectorAll('#layer-control input[name="layer-toggle"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const selectedLayerId = e.target.value;
+        layers.forEach(layer => {
+          if (layer.geometryType === 'polygon') {
+            if (layer.id !== 'Williamson County') {
+              map.setLayoutProperty(`${layer.id}-line`, 'visibility', 'none');
+              map.setLayoutProperty(`${layer.id}-fill`, 'visibility', 'none');
+            }
+          } else if (layer.geometryType === 'point') {
+            map.setLayoutProperty(`${layer.id}-circle`, 'visibility', 'none');
+          } else if (layer.geometryType === 'line') {
+            map.setLayoutProperty(`${layer.id}-line`, 'visibility', 'none');
+          }
+        });
+        const selectedLayer = layers.find(layer => layer.id === selectedLayerId);
+        if (selectedLayer.geometryType === 'polygon') {
+          map.setLayoutProperty(`${selectedLayerId}-line`, 'visibility', 'visible');
+          map.setLayoutProperty(`${selectedLayerId}-fill`, 'visibility', 'visible');
+        } else if (selectedLayer.geometryType === 'point') {
+          map.setLayoutProperty(`${selectedLayerId}-circle`, 'visibility', 'visible');
+        } else if (selectedLayer.geometryType === 'line') {
+          map.setLayoutProperty(`${selectedLayerId}-line`, 'visibility', 'visible');
+        }
+
+        const williamsonCheckbox = document.getElementById('Williamson County');
+        if (williamsonCheckbox.checked) {
+          map.setLayoutProperty('Williamson County-line', 'visibility', 'visible');
+          map.setLayoutProperty('Williamson County-fill', 'visibility', 'visible');
+        }
+      });
+    });
+
+    document.querySelector('#layer-control input[name="williamson-toggle"]').addEventListener('change', (e) => {
+      const visibility = map.getLayoutProperty('Williamson County-line', 'visibility');
+      const newVisibility = visibility === 'visible' ? 'none' : 'visible';
+      map.setLayoutProperty('Williamson County-line', 'visibility', newVisibility);
+      map.setLayoutProperty('Williamson County-fill', 'visibility', newVisibility);
+    });
+  });
+</script>
+</body>
+</html>
